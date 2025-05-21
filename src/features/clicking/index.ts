@@ -1,0 +1,1 @@
+export { ClickArea } from './ui/ClickArea'; 
