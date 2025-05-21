@@ -109,13 +109,18 @@ export const useGameStore = create<GameStore>()(
         upgrades.forEach((upgrade: Upgrade) => {
           if (upgrade.effect.type === 'perClick') {
             const resource = newResources[upgrade.resourceType];
-            resource.amount += upgrade.effect.value * upgrade.level;
+            if (upgrade.resourceType === 'mana') {
+              // Для маны добавляем базовое значение + эффект от улучшений
+              resource.amount += (resource.perClick + upgrade.effect.value * upgrade.level);
+            } else {
+              // Для других ресурсов только эффект от улучшений
+              resource.amount += upgrade.effect.value * upgrade.level;
+            }
           }
         });
 
-        // Add base click resources
+        // Add base click resources (только для золота)
         newResources.gold.amount += newResources.gold.perClick;
-        newResources.mana.amount += newResources.mana.perClick;
 
         set((state: GameState) => ({
           player: {
@@ -170,7 +175,10 @@ export const useGameStore = create<GameStore>()(
         upgrades.forEach((upgrade) => {
           if (upgrade.effect.type === 'perSecond') {
             const resource = newResources[upgrade.resourceType];
-            resource.amount += upgrade.effect.value * upgrade.level * timeDiff;
+            // Добавляем базовое значение + эффект от улучшений
+            const baseValue = resource.perSecond;
+            const upgradeValue = upgrade.effect.value * upgrade.level;
+            resource.amount += (baseValue + upgradeValue) * timeDiff;
           }
         });
 
