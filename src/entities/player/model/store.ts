@@ -49,7 +49,7 @@ const INITIAL_UPGRADES: Upgrade[] = [
     name: 'Магический клик',
     description: 'Добывает ману при клике',
     cost: 100,
-    resourceType: 'gold',
+    resourceType: 'mana',
     effect: {
       type: 'perClick',
       value: 1,
@@ -61,7 +61,7 @@ const INITIAL_UPGRADES: Upgrade[] = [
     name: 'Магический кристалл',
     description: 'Автоматически генерирует ману',
     cost: 200,
-    resourceType: 'gold',
+    resourceType: 'mana',
     effect: {
       type: 'perSecond',
       value: 1,
@@ -105,6 +105,8 @@ export const useGameStore = create<GameStore>()(
         const { player, upgrades } = get();
         const newResources = { ...player.resources };
 
+        console.log('upgrades', upgrades);
+
         // Apply per-click effects from upgrades
         upgrades.forEach((upgrade: Upgrade) => {
           if (upgrade.effect.type === 'perClick') {
@@ -112,6 +114,7 @@ export const useGameStore = create<GameStore>()(
             if (upgrade.resourceType === 'mana') {
               // Для маны добавляем базовое значение + эффект от улучшений
               resource.amount += (resource.perClick + upgrade.effect.value * upgrade.level);
+              console.log('resource', resource);
             } else {
               // Для других ресурсов только эффект от улучшений
               resource.amount += upgrade.effect.value * upgrade.level;
